@@ -22,7 +22,10 @@ class LRUCache:
     """
 
     def get(self, key):
-        pass
+        if key in self.storage:
+            self.cache.move_to_front(self.storage[key])
+            return self.storage[key].value
+        return None
 
     """
     Adds the given key-value pair to the cache. The newly-
