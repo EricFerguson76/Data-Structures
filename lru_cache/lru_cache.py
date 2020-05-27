@@ -38,8 +38,29 @@ class LRUCache:
     the newly-specified value.
     """
 
-    def set(self, key, value):
-        pass
+    def set(self, key, val):
+        if self.size == self.limit:
+            node = self.cache.tail
+            old_key = node.value[0]
+            self.cache.remove_from_tail()
+
+            del self.storage[old_key]
+            self.size -= 1
+
+        if key not in self.storage:
+            self.storage[key] = val
+            self.cache.add_to_head([key, val])
+
+            self.size += 1
+
+        else:
+            self.storage[key] = val
+            node = node.head
+            while node is not None:
+                if key == node.value[0]:
+                    node.value[1] = val
+
+                node = node.next
 
 
 ######### Double Linked List #############
