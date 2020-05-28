@@ -23,9 +23,11 @@ class LRUCache:
 
     def get(self, key):
         if key in self.storage:
-            self.cache.move_to_front(self.storage[key])
-            return self.storage[key].value
-        return None
+            node = self.storage[key]
+            self.cache.move_to_front(node)
+            return node.value[1]
+        else:
+            return None
 
     """
     Adds the given key-value pair to the cache. The newly-
@@ -39,28 +41,22 @@ class LRUCache:
     """
 
     def set(self, key, val):
-        if self.size == self.limit:
-            node = self.cache.tail
-            old_key = node.value[0]
-            self.cache.remove_from_tail()
-
-            del self.storage[old_key]
-            self.size -= 1
-
-        if key not in self.storage:
-            self.storage[key] = val
-            self.cache.add_to_head([key, val])
-
-            self.size += 1
-
+        if key in self.storage:
+            node = self.storage[key]
+            node.value = [key, val]
+            self.cache.move_to_front(node)
         else:
-            self.storage[key] = val
-            node = node.head
-            while node is not None:
-                if key == node.value[0]:
-                    node.value[1] = val
+            if self.size == self.limit:
+                node = self.cache.tail
+                old_key = node.value[0]
+                self.cache.remove_from_tail()
 
-                node = node.next
+                del self.storage[old_key]
+                self.size -= 1
+
+            self.cache.add_to_head([key, val])
+            self.storage[key] = self.cache.head
+            self.size += 1
 
 
 ######### Double Linked List #############
